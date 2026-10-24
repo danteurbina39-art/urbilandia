@@ -13,6 +13,292 @@ button,input{font:inherit}.app{display:grid;grid-template-columns:240px 1fr;min-
 </style>
 </head>
 <script>
+const TMDB_API_KEY="823d60632741c2f4df06722fed76d486";
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
+
+async function pedirTMDB(ruta) {
+  const separador = ruta.includes("?") ? "&" : "?";
+  const url = TMDB_BASE + ruta + separador +
+    "api_key=" + encodeURIComponent(TMDB_API_KEY) +
+    "&language=es-AR&page=1";
+
+  const respuesta = await fetch(url);
+  if (!respuesta.ok) throw new Error("Error al cargar " + ruta);
+  return respuesta.json();
+}
+
+function crearFila(titulo, peliculas, tipo) {
+  const seccion = document.createElement("section");
+  seccion.style.cssText = "margin:28px 0;color:white";
+
+  const encabezado = document.createElement("h2");
+  encabezado.textContent = titulo;
+  encabezado.style.cssText =
+    "font-size:21px;margin:0 0 14px;padding:0 4px";
+  seccion.appendChild(encabezado);
+
+  const fila = document.createElement("div");
+  fila.style.cssText =
+    "display:flex;gap:14px;overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin";
+
+  peliculas.forEach(pelicula => {
+    const tarjeta = document.createElement("article");
+    tarjeta.style.cssText =
+      "flex:0 0 145px;min-width:145px;background:#181818;border-radius:9px;overflow:hidden";
+
+    if (pelicula.poster_path) {
+      const imagen = document.createElement("img");
+      imagen.src = TMDB_IMG + pelicula.poster_path;
+      imagen.alt = pelicula.title || pelicula.name || "Póster";
+      imagen.loading = "lazy";
+      imagen.style.cssText =
+        "width:100%;aspect-ratio:2/3;object-fit:cover;display:block";
+      tarjeta.appendChild(imagen);
+    } else {
+      const sinImagen = document.createElement("div");
+      sinImagen.textContent = "Sin póster";
+      sinImagen.style.cssText =
+        "aspect-ratio:2/3;display:grid;place-items:center;color:#aaa";
+      tarjeta.appendChild(sinImagen);
+    }
+
+    const nombre = document.createElement("h3");
+    nombre.textContent = pelicula.title || pelicula.name || "Sin título";
+    nombre.style.cssText =
+      "font-size:14px;line-height:1.35;padding:9px 9px 4px;margin:0";
+    tarjeta.appendChild(nombre);
+
+    const descripcion = document.createElement("p");
+    descripcion.textContent =
+      pelicula.overview || "Sin sinopsis disponible.";
+    descripcion.style.cssText =
+      "font-size:12px;line-height:1.4;color:#ccc;padding:0 9px 10px;margin:0";
+    tarjeta.appendChild(descripcion);
+
+    fila.appendChild(tarjeta);
+  });
+
+  seccion.appendChild(fila);
+  return seccion;
+}
+
+async function cargarCatalogoDanteTV() {
+  let catalogo = document.getElementById("catalogo-tmdb");
+
+  if (!catalogo) {
+    catalogo = document.createElement("div");
+    catalogo.id = "catalogo-tmdb";
+    catalogo.style.cssText =
+      "padding:16px;background:#080808;color:white";
+    const principal = document.querySelector("main") || document.body;
+    principal.appendChild(catalogo);
+  }
+
+  catalogo.replaceChildren();
+
+  const categorias = [
+    {
+      titulo: "Películas populares",
+      ruta: "/movie/popular"
+    },
+    {
+      titulo: "Acción",
+      ruta: "/discover/movie?with_genres=28&sort_by=popularity.desc"
+    },
+    {
+      titulo: "Terror",
+      ruta: "/discover/movie?with_genres=27&sort_by=popularity.desc"
+    },
+    {
+      titulo: "Comedia",
+      ruta: "/discover/movie?with_genres=35&sort_by=popularity.desc"
+    },
+    {
+      titulo: "Series populares",
+      ruta: "/tv/popular",
+      tipo: "tv"
+    }
+  ];
+
+  const titulo = document.createElement("h1");
+  titulo.textContent = "Descubrí tu próximo favorito";
+  titulo.style.cssText = "font-size:25px;margin:8px 0 24px";
+  catalogo.appendChild(titulo);
+
+  for (const categoria of categorias) {
+    try {
+      const datos = await pedirTMDB(categoria.ruta);
+      catalogo.appendChild(
+        crearFila(categoria.titulo, datos.results || [], categoria.tipo)
+      );
+    } catch (error) {
+      console.error("Dante TV:", categoria.titulo, error);
+      const aviso = document.createElement("p");
+      aviso.textContent =
+        "No se pudo cargar " + categoria.titulo + ".";
+      aviso.style.color = "#bbb";
+      catalogo.appendChild(aviso);
+    }
+  }
+
+  const atribucion = document.createElement("p");
+  atribucion.textContent =
+    "Este producto utiliza la API de TMDB, pero no está respaldado ni certificado por TMDB.";
+  atribucion.style.cssText =
+    "font-size:12px;color:#aaa;padding:20px 4px";
+  catalogo.appendChild(atribucion);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", cargarCatalogoDanteTV);
+} else {
+  cargarCatalogoDanteTV();
+}
+</script><script>
+const TMDB_API_KEY = "TU_CLAVE_ACTUAL_DE_TMDB";
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
+
+async function pedirTMDB(ruta) {
+  const separador = ruta.includes("?") ? "&" : "?";
+  const url = TMDB_BASE + ruta + separador +
+    "api_key=" + encodeURIComponent(TMDB_API_KEY) +
+    "&language=es-AR&page=1";
+
+  const respuesta = await fetch(url);
+  if (!respuesta.ok) throw new Error("Error al cargar " + ruta);
+  return respuesta.json();
+}
+
+function crearFila(titulo, peliculas, tipo) {
+  const seccion = document.createElement("section");
+  seccion.style.cssText = "margin:28px 0;color:white";
+
+  const encabezado = document.createElement("h2");
+  encabezado.textContent = titulo;
+  encabezado.style.cssText =
+    "font-size:21px;margin:0 0 14px;padding:0 4px";
+  seccion.appendChild(encabezado);
+
+  const fila = document.createElement("div");
+  fila.style.cssText =
+    "display:flex;gap:14px;overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin";
+
+  peliculas.forEach(pelicula => {
+    const tarjeta = document.createElement("article");
+    tarjeta.style.cssText =
+      "flex:0 0 145px;min-width:145px;background:#181818;border-radius:9px;overflow:hidden";
+
+    if (pelicula.poster_path) {
+      const imagen = document.createElement("img");
+      imagen.src = TMDB_IMG + pelicula.poster_path;
+      imagen.alt = pelicula.title || pelicula.name || "Póster";
+      imagen.loading = "lazy";
+      imagen.style.cssText =
+        "width:100%;aspect-ratio:2/3;object-fit:cover;display:block";
+      tarjeta.appendChild(imagen);
+    } else {
+      const sinImagen = document.createElement("div");
+      sinImagen.textContent = "Sin póster";
+      sinImagen.style.cssText =
+        "aspect-ratio:2/3;display:grid;place-items:center;color:#aaa";
+      tarjeta.appendChild(sinImagen);
+    }
+
+    const nombre = document.createElement("h3");
+    nombre.textContent = pelicula.title || pelicula.name || "Sin título";
+    nombre.style.cssText =
+      "font-size:14px;line-height:1.35;padding:9px 9px 4px;margin:0";
+    tarjeta.appendChild(nombre);
+
+    const descripcion = document.createElement("p");
+    descripcion.textContent =
+      pelicula.overview || "Sin sinopsis disponible.";
+    descripcion.style.cssText =
+      "font-size:12px;line-height:1.4;color:#ccc;padding:0 9px 10px;margin:0";
+    tarjeta.appendChild(descripcion);
+
+    fila.appendChild(tarjeta);
+  });
+
+  seccion.appendChild(fila);
+  return seccion;
+}
+
+async function cargarCatalogoDanteTV() {
+  let catalogo = document.getElementById("catalogo-tmdb");
+
+  if (!catalogo) {
+    catalogo = document.createElement("div");
+    catalogo.id = "catalogo-tmdb";
+    catalogo.style.cssText =
+      "padding:16px;background:#080808;color:white";
+    const principal = document.querySelector("main") || document.body;
+    principal.appendChild(catalogo);
+  }
+
+  catalogo.replaceChildren();
+
+  const categorias = [
+    {
+      titulo: "Películas populares",
+      ruta: "/movie/popular"
+    },
+    {
+      titulo: "Acción",
+      ruta: "/discover/movie?with_genres=28&sort_by=popularity.desc"
+    },
+    {
+      titulo: "Terror",
+      ruta: "/discover/movie?with_genres=27&sort_by=popularity.desc"
+    },
+    {
+      titulo: "Comedia",
+      ruta: "/discover/movie?with_genres=35&sort_by=popularity.desc"
+    },
+    {
+      titulo: "Series populares",
+      ruta: "/tv/popular",
+      tipo: "tv"
+    }
+  ];
+
+  const titulo = document.createElement("h1");
+  titulo.textContent = "Descubrí tu próximo favorito";
+  titulo.style.cssText = "font-size:25px;margin:8px 0 24px";
+  catalogo.appendChild(titulo);
+
+  for (const categoria of categorias) {
+    try {
+      const datos = await pedirTMDB(categoria.ruta);
+      catalogo.appendChild(
+        crearFila(categoria.titulo, datos.results || [], categoria.tipo)
+      );
+    } catch (error) {
+      console.error("Dante TV:", categoria.titulo, error);
+      const aviso = document.createElement("p");
+      aviso.textContent =
+        "No se pudo cargar " + categoria.titulo + ".";
+      aviso.style.color = "#bbb";
+      catalogo.appendChild(aviso);
+    }
+  }
+
+  const atribucion = document.createElement("p");
+  atribucion.textContent =
+    "Este producto utiliza la API de TMDB, pero no está respaldado ni certificado por TMDB.";
+  atribucion.style.cssText =
+    "font-size:12px;color:#aaa;padding:20px 4px";
+  catalogo.appendChild(atribucion);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", cargarCatalogoDanteTV);
+} else {
+  cargarCatalogoDanteTV();
+}
+</script>
 const TMDB_API_KEY = "823d60632741c2f4df06722fed76d486";
 const TMDB_IMAGE = "https://image.tmdb.org/t/p/w500";
 
