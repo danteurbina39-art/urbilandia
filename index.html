@@ -386,7 +386,25 @@ if (document.readyState === "loading") {
 } else {
   cargarCatalogoDanteTV();
 }
-</script><body>
+</script><section id="dante-pelicula" style="background:#111;color:white;padding:20px;border-radius:12px;margin:20px 0;">
+  <h2>🐰 Big Buck Bunny</h2>
+  <p>Película animada gratuita para probar Dante TV.</p>
+
+  <button onclick="document.getElementById('dante-reproductor').style.display='block'; this.style.display='none';"
+    style="background:#e50914;color:white;border:0;padding:12px 22px;border-radius:8px;font-size:16px;">
+    ▶ Reproducir película
+  </button>
+
+  <div id="dante-reproductor" style="display:none;margin-top:16px;">
+    <iframe
+      src="https://archive.org/embed/BigBuckBunny_328"
+      width="100%"
+      height="300"
+      style="border:0;border-radius:10px;"
+      allowfullscreen>
+    </iframe>
+  </div>
+</section> <body>
 <div class="app">
 <aside class="sidebar">
   <div class="brand"><div class="brandmark">▶</div><div><strong>URBI<span>LANDIA</span></strong><div class="tagline">TU MUNDO, TU ENTRETENIMIENTO</div></div></div>
