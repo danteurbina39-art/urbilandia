@@ -12,7 +12,95 @@ button,input{font:inherit}.app{display:grid;grid-template-columns:240px 1fr;min-
 @media(max-width:700px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:15px}.mobilebrand{display:flex;align-items:center;gap:8px;font-weight:800}.mobilebrand .brandmark{width:34px;height:34px;font-size:18px}.search{width:auto;flex:1}.search input{padding:10px 12px 10px 34px;font-size:12px}.search span{left:11px;top:9px}.avatar{width:35px;height:35px;flex-shrink:0}.hero{padding:23px;min-height:245px}.hero:after{right:-120px}.hero p{font-size:12px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.art{height:145px}.channels{grid-template-columns:repeat(2,minmax(0,1fr))}.section{margin-top:22px}.section h2{font-size:16px}.bottom-mobile{display:flex;position:sticky;bottom:0;background:#080e1b;border-top:1px solid var(--line);padding:8px 3px;justify-content:space-around;z-index:5}.bottom-mobile button{background:none;border:0;color:#abb6d0;font-size:10px;display:grid;gap:4px;justify-items:center}.bottom-mobile span{font-size:18px}.resume .art{height:105px}}
 </style>
 </head>
-<body>
+<script>
+const TMDB_API_KEY = "823d60632741c2f4df06722fed76d486";
+const TMDB_IMAGE = "https://image.tmdb.org/t/p/w500";
+
+async function cargarCatalogoDanteTV() {
+  const secciones = document.querySelectorAll("section");
+
+  try {
+    const respuesta = await fetch(
+      "https://api.themoviedb.org/3/movie/popular?api_key=" +
+      encodeURIComponent(TMDB_API_KEY) +
+      "&language=es-AR&page=1"
+    );
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo cargar el catálogo");
+    }
+
+    const datos = await respuesta.json();
+
+    let catalogo = document.getElementById("catalogo-tmdb");
+
+    if (!catalogo) {
+      catalogo = document.createElement("section");
+      catalogo.id = "catalogo-tmdb";
+      catalogo.style.cssText = "padding:24px;color:white";
+
+      const titulo = document.createElement("h2");
+      titulo.textContent = "Películas populares";
+      catalogo.appendChild(titulo);
+
+      const fila = document.createElement("div");
+      fila.id = "fila-tmdb";
+      fila.style.cssText =
+        "display:flex;gap:16px;overflow-x:auto;padding:12px 0";
+
+      catalogo.appendChild(fila);
+
+      const principal = document.querySelector("main") ||
+                        document.body;
+
+      principal.appendChild(catalogo);
+    }
+
+    const fila = document.getElementById("fila-tmdb");
+    fila.replaceChildren();
+
+    datos.results.forEach(pelicula => {
+      const tarjeta = document.createElement("article");
+      tarjeta.style.cssText =
+        "flex:0 0 150px;background:#181818;border-radius:10px;overflow:hidden";
+
+      if (pelicula.poster_path) {
+        const imagen = document.createElement("img");
+        imagen.src = TMDB_IMAGE + pelicula.poster_path;
+        imagen.alt = pelicula.title;
+        imagen.loading = "lazy";
+        imagen.style.cssText = "width:100%;display:block";
+        tarjeta.appendChild(imagen);
+      }
+
+      const titulo = document.createElement("h3");
+      titulo.textContent = pelicula.title;
+      titulo.style.cssText = "font-size:15px;padding:8px;margin:0";
+      tarjeta.appendChild(titulo);
+
+      const descripcion = document.createElement("p");
+      descripcion.textContent =
+        pelicula.overview || "Sin sinopsis disponible.";
+      descripcion.style.cssText =
+        "font-size:12px;padding:8px;margin:0;color:#ccc";
+      tarjeta.appendChild(descripcion);
+
+      fila.appendChild(tarjeta);
+    });
+  } catch (error) {
+    console.error("Dante TV:", error);
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    cargarCatalogoDanteTV
+  );
+} else {
+  cargarCatalogoDanteTV();
+}
+</script><body>
 <div class="app">
 <aside class="sidebar">
   <div class="brand"><div class="brandmark">▶</div><div><strong>URBI<span>LANDIA</span></strong><div class="tagline">TU MUNDO, TU ENTRETENIMIENTO</div></div></div>
